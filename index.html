@@ -1,0 +1,2288 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İSG Eğitim Takip Formu ve Bildirim Sistemi</title>
+    <style>
+        :root {
+            --primary: #0284c7;
+            --primary-dark: #0369a1;
+            --primary-light: #e0f2fe;
+            --success: #16a34a;
+            --success-light: #dcfce7;
+            --warning: #d97706;
+            --warning-light: #fef3c7;
+            --danger: #dc2626;
+            --danger-light: #fee2e2;
+            --slate-50: #f8fafc;
+            --slate-100: #f1f5f9;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+            --slate-600: #475569;
+            --slate-700: #334155;
+            --slate-800: #1e293b;
+            --slate-900: #0f172a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            color: var(--slate-900);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Navbar */
+        .navbar {
+            background: #ffffff;
+            border-bottom: 1px solid var(--slate-200);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 20px;
+            box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
+        }
+
+        .brand-title h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--slate-900);
+            line-height: 1.2;
+        }
+
+        .brand-title p {
+            font-size: 12px;
+            color: var(--slate-600);
+            font-weight: 500;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            font-size: 13.5px;
+            font-weight: 600;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-outline {
+            background: white;
+            color: var(--slate-700);
+            border-color: var(--slate-300);
+        }
+        .btn-outline:hover {
+            background: var(--slate-50);
+            border-color: var(--slate-400);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+        .btn-warning:hover {
+            background: #b45309;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        .btn-success:hover {
+            background: #15803d;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
+            border-radius: 6px;
+        }
+
+        /* Alert Banner */
+        .alert-banner {
+            background: linear-gradient(90deg, #fffbeb 0%, #fef3c7 100%);
+            border-bottom: 1px solid #fde68a;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .alert-banner.danger {
+            background: linear-gradient(90deg, #fef2f2 0%, #fee2e2 100%);
+            border-bottom: 1px solid #fecaca;
+        }
+
+        .alert-banner-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alert-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f59e0b;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .alert-badge.danger {
+            background: #ef4444;
+        }
+
+        .alert-text h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #92400e;
+        }
+        .alert-banner.danger .alert-text h3 {
+            color: #991b1b;
+        }
+
+        .alert-text p {
+            font-size: 12.5px;
+            color: #b45309;
+        }
+        .alert-banner.danger .alert-text p {
+            color: #b91c1c;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1480px;
+            margin: 0 auto;
+            padding: 20px 24px;
+            width: 100%;
+            flex: 1;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 18px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--slate-200);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+            border-color: var(--slate-300);
+        }
+
+        .stat-card.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary-light);
+        }
+
+        .stat-card::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+        }
+
+        .stat-card.blue::before { background: var(--primary); }
+        .stat-card.green::before { background: var(--success); }
+        .stat-card.yellow::before { background: var(--warning); }
+        .stat-card.red::before { background: var(--danger); }
+        .stat-card.slate::before { background: var(--slate-600); }
+
+        .stat-info h4 {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--slate-600);
+            margin-bottom: 4px;
+        }
+
+        .stat-info .stat-number {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--slate-900);
+            line-height: 1;
+        }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .stat-card.blue .stat-icon { background: var(--primary-light); color: var(--primary); }
+        .stat-card.green .stat-icon { background: var(--success-light); color: var(--success); }
+        .stat-card.yellow .stat-icon { background: var(--warning-light); color: var(--warning); }
+        .stat-card.red .stat-icon { background: var(--danger-light); color: var(--danger); }
+        .stat-card.slate .stat-icon { background: var(--slate-100); color: var(--slate-600); }
+
+        /* Main Card */
+        .card {
+            background: white;
+            border-radius: 14px;
+            border: 1px solid var(--slate-200);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--slate-200);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            background: #ffffff;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            background: var(--slate-100);
+            color: var(--slate-700);
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tab-btn:hover {
+            background: var(--slate-200);
+        }
+
+        .tab-btn.active {
+            background: var(--slate-900);
+            color: white;
+        }
+
+        .tab-badge {
+            background: rgba(0,0,0,0.08);
+            padding: 2px 6px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .tab-btn.active .tab-badge {
+            background: rgba(255,255,255,0.25);
+        }
+
+        .search-filter-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+            min-width: 280px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 8px 12px 8px 36px;
+            border-radius: 8px;
+            border: 1px solid var(--slate-300);
+            font-size: 13.5px;
+            outline: none;
+            transition: all 0.15s ease;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+        }
+
+        .search-box svg {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--slate-600);
+            width: 16px;
+            height: 16px;
+        }
+
+        .select-filter {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--slate-300);
+            font-size: 13px;
+            outline: none;
+            background: white;
+            color: var(--slate-700);
+            font-weight: 500;
+            max-width: 220px;
+        }
+
+        /* Action Toolbar for selected items */
+        .batch-toolbar {
+            background: #eff6ff;
+            border-bottom: 1px solid #bfdbfe;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13.5px;
+            color: #1e40af;
+            font-weight: 600;
+        }
+
+        .batch-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Table */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13.5px;
+        }
+
+        th {
+            background: var(--slate-50);
+            color: var(--slate-600);
+            font-weight: 700;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--slate-200);
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--slate-200);
+            vertical-align: middle;
+            color: var(--slate-700);
+        }
+
+        tr:hover td {
+            background: #f8fafc;
+        }
+
+        tr.highlight-row td {
+            background: #fffbeb !important;
+        }
+
+        tr.danger-row td {
+            background: #fef2f2 !important;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 11.5px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .status-badge.valid {
+            background: var(--success-light);
+            color: #15803d;
+        }
+
+        .status-badge.warning {
+            background: var(--warning-light);
+            color: #b45309;
+            animation: pulseWarning 2s infinite ease-in-out;
+        }
+
+        .status-badge.expired {
+            background: var(--danger-light);
+            color: #b91c1c;
+            animation: pulseDanger 2s infinite ease-in-out;
+        }
+
+        .status-badge.no_training {
+            background: var(--slate-100);
+            color: var(--slate-600);
+        }
+
+        .countdown-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        .countdown-pill.valid {
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .countdown-pill.warning {
+            background: #fffbeb;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+
+        .countdown-pill.expired {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .countdown-pill.none {
+            background: var(--slate-100);
+            color: var(--slate-600);
+        }
+
+        /* Pagination */
+        .card-footer {
+            padding: 12px 20px;
+            border-top: 1px solid var(--slate-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            font-size: 13px;
+            color: var(--slate-600);
+        }
+
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .page-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1px solid var(--slate-200);
+            background: white;
+            color: var(--slate-700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12.5px;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: var(--slate-100);
+        }
+
+        .page-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(3px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 780px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+            transform: scale(0.95);
+            transition: transform 0.2s ease;
+            overflow: hidden;
+        }
+
+        .modal-overlay.open .modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--slate-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--slate-900);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            color: var(--slate-600);
+            padding: 4px;
+            border-radius: 6px;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            background: var(--slate-100);
+            color: var(--slate-900);
+        }
+
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--slate-200);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+            background: var(--slate-50);
+        }
+
+        /* Form elements inside modal */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--slate-700);
+        }
+
+        .form-control {
+            padding: 9px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--slate-300);
+            font-size: 13.5px;
+            outline: none;
+            transition: all 0.15s ease;
+            width: 100%;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+        }
+
+        .participants-box {
+            border: 1px solid var(--slate-200);
+            border-radius: 10px;
+            padding: 12px;
+            background: var(--slate-50);
+            max-height: 200px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .participant-item {
+            background: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--slate-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12.5px;
+        }
+
+        .remove-participant {
+            color: var(--danger);
+            cursor: pointer;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .remove-participant:hover {
+            background: var(--danger-light);
+        }
+
+        /* Printable Official Form Layout */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printArea, #printArea * {
+                visibility: visible;
+            }
+            #printArea {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: white;
+                color: black;
+                padding: 20px;
+                display: block !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        #printArea {
+            display: none;
+        }
+
+        .official-print-header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        .official-print-header h2 {
+            font-size: 18px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .official-print-header h3 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+        .official-print-header p {
+            font-size: 11px;
+            color: #444;
+            margin-top: 4px;
+        }
+
+        .print-meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            border: 1px solid #333;
+            padding: 10px;
+            font-size: 12px;
+            margin-bottom: 16px;
+        }
+
+        .print-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+
+        .print-table th, .print-table td {
+            border: 1px solid #333;
+            padding: 6px 8px;
+            text-align: left;
+        }
+
+        .print-table th {
+            background: #eee;
+            font-weight: 700;
+        }
+
+        .print-sign-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .sign-box {
+            padding: 10px;
+        }
+        .sign-line {
+            height: 50px;
+        }
+
+        /* Animations */
+        @keyframes pulseWarning {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.03); opacity: 0.9; }
+        }
+
+        @keyframes pulseDanger {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.04); opacity: 0.85; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Toast notification */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 150;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: #1e293b;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 10px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13.5px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .toast.success { background: #15803d; }
+        .toast.warning { background: #b45309; }
+        .toast.error { background: #b91c1c; }
+
+        .checkbox-custom {
+            width: 17px;
+            height: 17px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation -->
+    <header class="navbar no-print">
+        <div class="nav-brand">
+            <div class="brand-logo">İSG</div>
+            <div class="brand-title">
+                <h1>İSG Eğitim Takip ve Bildirim Sistemi</h1>
+                <p>Osmangazi Belediyesi Personel A.Ş. • 2 Yıl Geçerlilik Kontrolü</p>
+            </div>
+        </div>
+
+        <div class="nav-actions">
+            <button class="btn btn-warning" id="btnNotificationCenter" onclick="filterByStatus('warning')">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                <span>Bildirimler (<span id="topWarnCount">0</span>)</span>
+            </button>
+
+            <button class="btn btn-primary" onclick="openNewTrainingModal()">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                <span>+ Yeni Eğitim Girişi</span>
+            </button>
+
+            <button class="btn btn-outline" onclick="openHistoryModal()">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path></svg>
+                <span>Eğitim Tarihçesi</span>
+            </button>
+
+            <button class="btn btn-outline" onclick="exportToExcel()">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>Excel İndir</span>
+            </button>
+
+            <button class="btn btn-outline" onclick="printOfficialForm()">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                <span>Form Yazdır</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Alert Warning Banner (Dynamic) -->
+    <div id="alertBanner" class="alert-banner no-print" style="display: none;">
+        <div class="alert-banner-content">
+            <div id="alertBadge" class="alert-badge">!</div>
+            <div class="alert-text">
+                <h3 id="alertTitle">DİKKAT: Eğitimi 90 Günden Az Kalan Çalışanlar Var!</h3>
+                <p id="alertDesc">Eğitim geçerlilik süresi 2 yıl olup, 90 günden az kalan personeller için yeni eğitim planlanmalıdır.</p>
+            </div>
+        </div>
+        <div style="display:flex; gap: 8px;">
+            <button class="btn btn-warning btn-sm" onclick="filterByStatus('warning')">Yaklaşanları Listele (<span id="bannerWarnCount">0</span>)</button>
+            <button class="btn btn-outline btn-sm" onclick="openSmsModalForWarning()">Toplu Bildirim Metni Oluştur</button>
+            <button class="btn btn-primary btn-sm" onclick="selectExpiringAndOpenTraining()">Toplu Eğitime Al</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container no-print">
+
+        <!-- Stat KPI Cards -->
+        <div class="stats-grid">
+            <div class="stat-card blue" onclick="filterByStatus('all')">
+                <div class="stat-info">
+                    <h4>Toplam Çalışan</h4>
+                    <div class="stat-number" id="statTotal">0</div>
+                </div>
+                <div class="stat-icon">👥</div>
+            </div>
+
+            <div class="stat-card green" onclick="filterByStatus('valid')">
+                <div class="stat-info">
+                    <h4>Eğitimi Geçerli (>90 Gün)</h4>
+                    <div class="stat-number" id="statValid">0</div>
+                </div>
+                <div class="stat-icon">✅</div>
+            </div>
+
+            <div class="stat-card yellow" onclick="filterByStatus('warning')">
+                <div class="stat-info">
+                    <h4>90 Günden Az Kaldı (Bildirim)</h4>
+                    <div class="stat-number" id="statWarning">0</div>
+                </div>
+                <div class="stat-icon">⚠️</div>
+            </div>
+
+            <div class="stat-card red" onclick="filterByStatus('expired')">
+                <div class="stat-info">
+                    <h4>Eğitim Süresi Dolmuş</h4>
+                    <div class="stat-number" id="statExpired">0</div>
+                </div>
+                <div class="stat-icon">⛔</div>
+            </div>
+
+            <div class="stat-card slate" onclick="filterByStatus('no_training')">
+                <div class="stat-info">
+                    <h4>Eğitimsiz / Kayıtsız</h4>
+                    <div class="stat-number" id="statNoTraining">0</div>
+                </div>
+                <div class="stat-icon">⭕</div>
+            </div>
+        </div>
+
+        <!-- Table Card -->
+        <div class="card">
+            <div class="card-header">
+                <div class="filter-tabs">
+                    <button class="tab-btn active" data-tab="all" onclick="filterByStatus('all')">
+                        <span>Tümü</span>
+                        <span class="tab-badge" id="tabCountAll">0</span>
+                    </button>
+                    <button class="tab-btn" data-tab="warning" onclick="filterByStatus('warning')" style="color: #b45309;">
+                        <span>⚠️ 90 Günden Az Kalanlar</span>
+                        <span class="tab-badge" id="tabCountWarning">0</span>
+                    </button>
+                    <button class="tab-btn" data-tab="expired" onclick="filterByStatus('expired')" style="color: #b91c1c;">
+                        <span>⛔ Süresi Dolanlar</span>
+                        <span class="tab-badge" id="tabCountExpired">0</span>
+                    </button>
+                    <button class="tab-btn" data-tab="no_training" onclick="filterByStatus('no_training')">
+                        <span>⭕ Eğitimsizler</span>
+                        <span class="tab-badge" id="tabCountNoTraining">0</span>
+                    </button>
+                    <button class="tab-btn" data-tab="valid" onclick="filterByStatus('valid')" style="color: #15803d;">
+                        <span>✅ Geçerli Olanlar</span>
+                        <span class="tab-badge" id="tabCountValid">0</span>
+                    </button>
+                </div>
+
+                <div class="search-filter-row">
+                    <div class="search-box">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" id="searchInput" placeholder="TC, İsim, Bölüm veya Meslek ara..." oninput="handleSearch()">
+                    </div>
+
+                    <select id="departmentFilter" class="select-filter" onchange="handleDepartmentFilter()">
+                        <option value="">Tüm Bölümler / Birimler</option>
+                    </select>
+
+                    <select id="sortSelect" class="select-filter" onchange="handleSort()">
+                        <option value="kalanGun_asc">Kalan Gün: En Az (Acil) Önce</option>
+                        <option value="kalanGun_desc">Kalan Gün: En Çok Önce</option>
+                        <option value="adSoyad_asc">İsim: A - Z</option>
+                        <option value="sonEgitim_desc">Son Eğitim: Yeniden Eskiye</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Batch Selection Toolbar -->
+            <div id="batchToolbar" class="batch-toolbar" style="display: none;">
+                <div>
+                    <span id="selectedCount">0</span> personel seçildi
+                </div>
+                <div class="batch-actions">
+                    <button class="btn btn-outline btn-sm" onclick="selectAllVisible(false)">Seçimi Kaldır</button>
+                    <button class="btn btn-primary btn-sm" onclick="openTrainingForSelected()">
+                        <span>+ Seçilenlere Eğitim Girişi Yap</span>
+                    </button>
+                    <button class="btn btn-warning btn-sm" onclick="openSmsModalForSelected()">
+                        <span>📱 Seçilenlere Bildirim Gönder</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 40px; text-align: center;">
+                                <input type="checkbox" id="selectAllCheckbox" class="checkbox-custom" onchange="toggleSelectAll(this.checked)">
+                            </th>
+                            <th>TC Kimlik No</th>
+                            <th>Adı Soyadı</th>
+                            <th>Bölümü / Müdürlük</th>
+                            <th>Görevi / Mesleği</th>
+                            <th>Son Eğitim Tarihi & Saati</th>
+                            <th>Geçerlilik Bitiş (2 Yıl)</th>
+                            <th>Kalan Süre</th>
+                            <th>Durum</th>
+                            <th style="text-align: right;">İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employeeTableBody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination Footer -->
+            <div class="card-footer">
+                <div>
+                    Gösterilen: <span id="footerShowing">0 - 0</span> / Toplam: <span id="footerTotal">0</span> personel
+                    <span style="margin-left: 14px;">Sayfa Başına:</span>
+                    <select id="pageSizeSelect" style="padding: 4px 8px; border-radius: 6px; border: 1px solid var(--slate-300);" onchange="changePageSize(this.value)">
+                        <option value="25">25</option>
+                        <option value="50" selected>50</option>
+                        <option value="100">100</option>
+                        <option value="250">250</option>
+                        <option value="10000">Tümü</option>
+                    </select>
+                </div>
+
+                <div class="pagination-controls" id="paginationControls">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal 1: Yeni Eğitim Girişi (İSG Eğitim Takip Formu) -->
+    <div id="newTrainingModal" class="modal-overlay no-print">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>
+                    <svg width="22" height="22" fill="none" stroke="var(--primary)" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path></svg>
+                    <span>İSG Eğitim Giriş ve Takip Formu</span>
+                </h2>
+                <button class="modal-close" onclick="closeModal('newTrainingModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="newTrainingForm" onsubmit="submitNewTraining(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Eğitim Tarihi *</label>
+                            <input type="date" id="formEgitimTarihi" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Eğitim Saati / Zaman Aralığı *</label>
+                            <input type="text" id="formEgitimSaati" class="form-control" placeholder="Örn: 09:00 - 13:00" value="09:00 - 13:00" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Eğitim Süresi (Saat) *</label>
+                            <select id="formEgitimSuresi" class="form-control" required>
+                                <option value="4" selected>4 Saat (Yarım Gün)</option>
+                                <option value="8">8 Saat (Az Tehlikeli - 1 Gün)</option>
+                                <option value="12">12 Saat (Tehlikeli - 2 Gün)</option>
+                                <option value="16">16 Saat (Çok Tehlikeli - 2 Gün)</option>
+                                <option value="2">2 Saat (Yenileme / İlave)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Eğitim Konusu *</label>
+                            <select id="formEgitimKonusu" class="form-control">
+                                <option value="Temel İş Sağlığı ve Güvenliği Eğitimi (Genel, Sağlık, Teknik)" selected>Temel İş Sağlığı ve Güvenliği Eğitimi (Genel, Sağlık, Teknik)</option>
+                                <option value="Yüksekte Güvenli Çalışma Eğitimi">Yüksekte Güvenli Çalışma Eğitimi</option>
+                                <option value="Kapalı Alanlarda Çalışma Güvenliği">Kapalı Alanlarda Çalışma Güvenliği</option>
+                                <option value="Temel Yangın Güvenliği ve Tahliye Eğitimi">Temel Yangın Güvenliği ve Tahliye Eğitimi</option>
+                                <option value="İlk Yardım Bilgilendirme Eğitimi">İlk Yardım Bilgilendirme Eğitimi</option>
+                                <option value="Ergonomi ve Elle Yük Taşıma Eğitimi">Ergonomi ve Elle Yük Taşıma Eğitimi</option>
+                                <option value="Kişisel Koruyucu Donanım (KKD) Kullanımı">Kişisel Koruyucu Donanım (KKD) Kullanımı</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Eğitici Bilgisi (İSG Uzmanı / İşyeri Hekimi) *</label>
+                            <input type="text" id="formEgitmen" class="form-control" placeholder="Örn: İrem Çelik - A Sınıfı İSG Uzmanı" value="İş Güvenliği Uzmanı / İşyeri Hekimi" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Eğitim Yeri *</label>
+                            <input type="text" id="formEgitimYeri" class="form-control" placeholder="Örn: Belediye Konferans Salonu" value="Belediye Eğitim Salonu" required>
+                        </div>
+
+                        <div class="form-group full">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 4px;">
+                                <label style="font-weight:700;">Eğitime Katılan Personel Listesi (<span id="modalParticipantCount">0</span> Kişi)</label>
+                                <div style="display:flex; gap: 6px;">
+                                    <button type="button" class="btn btn-outline btn-sm" onclick="addExpiringToModal()">+ 90 Günden Az Kalanları Ekle</button>
+                                    <button type="button" class="btn btn-outline btn-sm" onclick="addNoTrainingToModal()">+ Eğitimsizleri Ekle</button>
+                                    <button type="button" class="btn btn-outline btn-sm" onclick="clearModalParticipants()">Temizle</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Participant search inside modal -->
+                            <div style="margin-bottom: 8px;">
+                                <input type="text" id="modalSearchEmployee" class="form-control" placeholder="Listeye personel eklemek için TC veya İsim yazın..." oninput="searchEmployeeForModal(this.value)">
+                                <div id="modalSearchResults" style="display:none; max-height:120px; overflow-y:auto; border:1px solid #ccc; background:white; border-radius:6px; margin-top:2px;"></div>
+                            </div>
+
+                            <div class="participants-box" id="modalParticipantsList">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <div class="form-group full">
+                            <label>Eğitim Notları / Açıklama</label>
+                            <textarea id="formNotlar" class="form-control" rows="2" placeholder="Varsa eğitim ile ilgili özel notlar veya değerlendirmeler..."></textarea>
+                        </div>
+                    </div>
+
+                    <div style="background:#eff6ff; border:1px solid #bfdbfe; padding:10px 14px; border-radius:8px; font-size:12.5px; color:#1e40af; margin-bottom:12px;">
+                        ℹ️ <strong>Önemli Kural:</strong> Eğitim kaydedildiğinde, seçilen personellerin son eğitim tarihi ve saati güncellenecek, geçerlilik süresi <strong>tam 2 yıl (24 ay)</strong> uzatılacak ve personelin durumu <strong>Geçerli (Yeşil)</strong> hale gelecektir.
+                    </div>
+
+                    <div class="modal-footer" style="padding: 12px 0 0 0; background: none; border:none;">
+                        <button type="button" class="btn btn-outline" onclick="closeModal('newTrainingModal')">İptal</button>
+                        <button type="submit" class="btn btn-primary">
+                            <span>💾 Eğitimi Kaydet & 2 Yıl Uzat</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Eğitim Tarihçesi -->
+    <div id="historyModal" class="modal-overlay no-print">
+        <div class="modal" style="max-width: 880px;">
+            <div class="modal-header">
+                <h2>
+                    <svg width="22" height="22" fill="none" stroke="var(--primary)" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path></svg>
+                    <span>Geçmiş İSG Eğitimleri Arşivi</span>
+                </h2>
+                <button class="modal-close" onclick="closeModal('historyModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Eğitim Tarihi</th>
+                                <th>Eğitim Saati & Süresi</th>
+                                <th>Eğitim Konusu</th>
+                                <th>Eğitici</th>
+                                <th>Katılımcı Sayısı</th>
+                                <th style="text-align: right;">Form</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeModal('historyModal')">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3: SMS & WhatsApp Bildirim Şablonu -->
+    <div id="smsModal" class="modal-overlay no-print">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>
+                    <svg width="22" height="22" fill="none" stroke="var(--warning)" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    <span>İSG Eğitimi Yaklaşan Personel Bildirimi</span>
+                </h2>
+                <button class="modal-close" onclick="closeModal('smsModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size:13px; color:var(--slate-600); margin-bottom:12px;">
+                    Aşağıdaki bildirim metni, eğitimi 90 günden az kalan personele veya birim amirine SMS, WhatsApp veya E-Posta yoluyla gönderilmek üzere hazırlanmıştır.
+                </p>
+
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label>Bildirim Gönderilecek Personel:</label>
+                    <div id="smsTargetName" style="font-weight:700; font-size:14px; color:var(--slate-900);"></div>
+                    <div id="smsTargetGsm" style="font-size:12.5px; color:var(--slate-600);"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Hazırlanan Mesaj Şablonu:</label>
+                    <textarea id="smsMessageTemplate" class="form-control" rows="6" readonly style="background:#f8fafc; font-size:13px; line-height:1.5;"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeModal('smsModal')">Kapat</button>
+                <button type="button" class="btn btn-outline" onclick="copySmsText()">📋 Metni Kopyala</button>
+                <a id="btnWhatsAppDirect" href="#" target="_blank" class="btn btn-success">
+                    <span>💬 WhatsApp ile Gönder</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Official Printable Area (Shown only when printing) -->
+    <div id="printArea">
+        <div class="official-print-header">
+            <h2>OSMANGAZİ BELEDİYESİ PERSONEL A.Ş.</h2>
+            <h3>ÇALIŞANLARIN İŞ SAĞLIĞI VE GÜVENLİĞİ EĞİTİMLERİ TAKİP VE KATILIM FORMU</h3>
+            <p>6331 Sayılı İş Sağlığı ve Güvenliği Kanunu & İlgili Yönetmelik Hükümleri Kapsamında Düzenlenmiştir</p>
+        </div>
+
+        <div class="print-meta-grid">
+            <div><strong>Eğitim Konusu:</strong> <span id="printKonu">Temel İş Sağlığı ve Güvenliği Eğitimi</span></div>
+            <div><strong>Eğitim Tarihi:</strong> <span id="printTarih">24.11.2026</span></div>
+            <div><strong>Eğitim Saati / Süresi:</strong> <span id="printSaat">09:00 - 13:00 (4 Saat)</span></div>
+            <div><strong>Eğitim Yeri:</strong> <span id="printYer">Belediye Konferans Salonu</span></div>
+            <div><strong>Eğitici / Görevli:</strong> <span id="printEgitmen">İş Güvenliği Uzmanı</span></div>
+            <div><strong>Geçerlilik Süresi:</strong> <span>2 Yıl (24 Ay)</span></div>
+        </div>
+
+        <table class="print-table">
+            <thead>
+                <tr>
+                    <th style="width:30px;">Sıra</th>
+                    <th style="width:110px;">TC Kimlik No</th>
+                    <th>Adı Soyadı</th>
+                    <th>Müdürlük / Bölümü</th>
+                    <th>Görevi / Mesleği</th>
+                    <th style="width:70px;">Süre</th>
+                    <th style="width:100px;">İmza</th>
+                </tr>
+            </thead>
+            <tbody id="printTableBody">
+                <!-- Populated dynamically -->
+            </tbody>
+        </table>
+
+        <div class="print-sign-grid">
+            <div class="sign-box">
+                <strong>EĞİTİMİ VEREN İSG UZMANI / HEKİM</strong><br>
+                <span>Adı Soyadı / İmza / Kaşe</span>
+                <div class="sign-line"></div>
+            </div>
+            <div class="sign-box">
+                <strong>İŞVEREN / İŞVEREN VEKİLİ ONAYI</strong><br>
+                <span>İmza / Kaşe</span>
+                <div class="sign-line"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container no-print"></div>
+
+    <script>
+        // State Management
+        let appData = {
+            summary: {
+                total: 0,
+                validCount: 0,
+                warningCount: 0,
+                expiredCount: 0,
+                noTrainingCount: 0
+            },
+            employees: [],
+            departments: [],
+            trainings: []
+        };
+
+        let currentFilter = {
+            status: 'all', // all, warning, expired, no_training, valid
+            search: '',
+            department: '',
+            sort: 'kalanGun_asc'
+        };
+
+        let pagination = {
+            page: 1,
+            pageSize: 50
+        };
+
+        let selectedTcSet = new Set();
+        let modalSelectedEmployees = [];
+
+        // Initialize App
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Set default date in modal to today
+            const todayStr = new Date().toISOString().split('T')[0];
+            document.getElementById('formEgitimTarihi').value = todayStr;
+
+            await loadData();
+            checkAndPromptNotifications();
+        });
+
+        // Load Data from local API or fallback to calisanlar.json
+        async function loadData() {
+            try {
+                let response = null;
+                try {
+                    response = await fetch('/api/data');
+                } catch(e) {}
+
+                if (response && response.ok) {
+                    const data = await response.json();
+                    appData = data;
+                } else {
+                    // Try to load calisanlar.json directly if open as file or static
+                    const staticResp = await fetch('calisanlar.json');
+                    if (staticResp.ok) {
+                        const staticData = await staticResp.json();
+                        appData.employees = staticData.employees || [];
+                        appData.summary = staticData.summary || {};
+                        // Extract depts
+                        const dSet = new Set();
+                        appData.employees.forEach(e => { if (e.bolumu) dSet.add(e.bolumu); });
+                        appData.departments = Array.from(dSet).sort();
+                    }
+                }
+
+                // Check localStorage overrides if any
+                const localTrainings = localStorage.getItem('isg_local_trainings');
+                if (localTrainings) {
+                    try {
+                        const lt = JSON.parse(localTrainings);
+                        applyLocalTrainings(lt);
+                    } catch(e) {}
+                }
+
+                renderStats();
+                populateDepartmentDropdown();
+                renderTable();
+                checkAlertBanner();
+
+            } catch (err) {
+                console.error("Veri yüklenemedi:", err);
+                showToast("Veri yüklenirken hata oluştu: " + err.message, "error");
+            }
+        }
+
+        function applyLocalTrainings(trainings) {
+            const today = new Date();
+            trainings.forEach(tr => {
+                const trDate = new Date(tr.egitimTarihi);
+                const expDate = new Date(trDate);
+                expDate.setFullYear(expDate.getFullYear() + 2);
+
+                tr.katilimciTcListesi.forEach(tc => {
+                    const emp = appData.employees.find(e => e.tc === tc);
+                    if (emp) {
+                        emp.sonEgitimTarihi = tr.egitimTarihi;
+                        emp.sonEgitimTarihiGosterim = formatDate(tr.egitimTarihi);
+                        emp.sonEgitimSaati = tr.egitimSaati;
+                        emp.sonEgitimKonusu = tr.egitimKonusu;
+                        emp.sonEgitimEgitmen = tr.egitmen;
+                        emp.gecerlilikBitisTarihi = expDate.toISOString().split('T')[0];
+                        emp.gecerlilikBitisGosterim = formatDate(expDate);
+
+                        const diffDays = Math.floor((expDate - today) / (1000 * 60 * 60 * 24));
+                        emp.kalanGun = diffDays;
+                        if (diffDays < 0) {
+                            emp.durum = "Süresi Dolmuş";
+                            emp.durumKodu = "expired";
+                        } else if (diffDays <= 90) {
+                            emp.durum = "Eğitim Yaklaştı (<90 Gün)";
+                            emp.durumKodu = "warning";
+                        } else {
+                            emp.durum = "Geçerli";
+                            emp.durumKodu = "valid";
+                        }
+                    }
+                });
+            });
+
+            // Recalculate summary
+            recalculateSummary();
+        }
+
+        function recalculateSummary() {
+            let v = 0, w = 0, ex = 0, no = 0;
+            const today = new Date();
+            appData.employees.forEach(emp => {
+                if (!emp.aktifMi) return;
+                if (!emp.sonEgitimTarihi) {
+                    no++;
+                    return;
+                }
+                const expDate = new Date(emp.sonEgitimTarihi);
+                expDate.setFullYear(expDate.getFullYear() + 2);
+                const diffDays = Math.floor((expDate - today) / (1000 * 60 * 60 * 24));
+                emp.kalanGun = diffDays;
+                if (diffDays < 0) {
+                    emp.durum = "Süresi Dolmuş";
+                    emp.durumKodu = "expired";
+                    ex++;
+                } else if (diffDays <= 90) {
+                    emp.durum = "Eğitim Yaklaştı (<90 Gün)";
+                    emp.durumKodu = "warning";
+                    w++;
+                } else {
+                    emp.durum = "Geçerli";
+                    emp.durumKodu = "valid";
+                    v++;
+                }
+            });
+            appData.summary.validCount = v;
+            appData.summary.warningCount = w;
+            appData.summary.expiredCount = ex;
+            appData.summary.noTrainingCount = no;
+        }
+
+        // Render Statistics Cards & Badges
+        function renderStats() {
+            document.getElementById('statTotal').innerText = (appData.employees.length).toLocaleString('tr-TR');
+            document.getElementById('statValid').innerText = (appData.summary.validCount || 0).toLocaleString('tr-TR');
+            document.getElementById('statWarning').innerText = (appData.summary.warningCount || 0).toLocaleString('tr-TR');
+            document.getElementById('statExpired').innerText = (appData.summary.expiredCount || 0).toLocaleString('tr-TR');
+            document.getElementById('statNoTraining').innerText = (appData.summary.noTrainingCount || 0).toLocaleString('tr-TR');
+
+            document.getElementById('tabCountAll').innerText = appData.employees.length;
+            document.getElementById('tabCountWarning').innerText = appData.summary.warningCount || 0;
+            document.getElementById('tabCountExpired').innerText = appData.summary.expiredCount || 0;
+            document.getElementById('tabCountNoTraining').innerText = appData.summary.noTrainingCount || 0;
+            document.getElementById('tabCountValid').innerText = appData.summary.validCount || 0;
+
+            const totalAlerts = (appData.summary.warningCount || 0) + (appData.summary.expiredCount || 0);
+            document.getElementById('topWarnCount').innerText = totalAlerts;
+        }
+
+        // Check Alert Banner
+        function checkAlertBanner() {
+            const warnCount = appData.summary.warningCount || 0;
+            const expCount = appData.summary.expiredCount || 0;
+            const banner = document.getElementById('alertBanner');
+
+            if (warnCount > 0 || expCount > 0) {
+                banner.style.display = 'flex';
+                document.getElementById('bannerWarnCount').innerText = warnCount;
+                if (expCount > 0) {
+                    banner.className = 'alert-banner danger no-print';
+                    document.getElementById('alertBadge').className = 'alert-badge danger';
+                    document.getElementById('alertTitle').innerText = `DİKKAT: ${expCount} Personelin Eğitimi Doldu, ${warnCount} Personelin Eğitimi 90 Günden Az Kaldı!`;
+                    document.getElementById('alertDesc').innerText = "6331 sayılı İSG Kanunu uyarınca eğitimi dolan veya yaklaşan personeller için acilen yenileme eğitimi düzenlenmelidir.";
+                } else {
+                    banner.className = 'alert-banner no-print';
+                    document.getElementById('alertBadge').className = 'alert-badge';
+                    document.getElementById('alertTitle').innerText = `DİKKAT: ${warnCount} Personelin İSG Eğitimi 90 Günden Az Kaldı!`;
+                    document.getElementById('alertDesc').innerText = "Eğitim geçerlilik süresi 2 yıl olup, 2 yılı dolmak üzere olan çalışanlar için bildirim gönderilmeli ve yeni eğitim planlanmalıdır.";
+                }
+            } else {
+                banner.style.display = 'none';
+            }
+        }
+
+        // Populate Department Filter
+        function populateDepartmentDropdown() {
+            const select = document.getElementById('departmentFilter');
+            const currentVal = select.value;
+            select.innerHTML = '<option value="">Tüm Bölümler / Birimler</option>';
+            if (appData.departments) {
+                appData.departments.forEach(dept => {
+                    const opt = document.createElement('option');
+                    opt.value = dept;
+                    opt.innerText = dept;
+                    if (dept === currentVal) opt.selected = true;
+                    select.appendChild(opt);
+                });
+            }
+        }
+
+        // Filter and Search logic
+        function getFilteredEmployees() {
+            let list = appData.employees;
+
+            // Status filter
+            if (currentFilter.status !== 'all') {
+                list = list.filter(e => e.durumKodu === currentFilter.status);
+            }
+
+            // Department filter
+            if (currentFilter.department) {
+                list = list.filter(e => e.bolumu === currentFilter.department);
+            }
+
+            // Search filter
+            if (currentFilter.search) {
+                const q = currentFilter.search.toLocaleLowerCase('tr-TR').trim();
+                list = list.filter(e => {
+                    return (e.tc && e.tc.includes(q)) ||
+                           (e.adSoyad && e.adSoyad.toLocaleLowerCase('tr-TR').includes(q)) ||
+                           (e.bolumu && e.bolumu.toLocaleLowerCase('tr-TR').includes(q)) ||
+                           (e.meslegi && e.meslegi.toLocaleLowerCase('tr-TR').includes(q)) ||
+                           (e.gorevi && e.gorevi.toLocaleLowerCase('tr-TR').includes(q));
+                });
+            }
+
+            // Sorting
+            list = [...list].sort((a, b) => {
+                if (currentFilter.sort === 'kalanGun_asc') {
+                    const kgA = a.kalanGun !== null && a.kalanGun !== undefined ? a.kalanGun : 99999;
+                    const kgB = b.kalanGun !== null && b.kalanGun !== undefined ? b.kalanGun : 99999;
+                    return kgA - kgB;
+                } else if (currentFilter.sort === 'kalanGun_desc') {
+                    const kgA = a.kalanGun !== null && a.kalanGun !== undefined ? a.kalanGun : -99999;
+                    const kgB = b.kalanGun !== null && b.kalanGun !== undefined ? b.kalanGun : -99999;
+                    return kgB - kgA;
+                } else if (currentFilter.sort === 'adSoyad_asc') {
+                    return (a.adSoyad || '').localeCompare(b.adSoyad || '', 'tr');
+                } else if (currentFilter.sort === 'sonEgitim_desc') {
+                    return (b.sonEgitimTarihi || '').localeCompare(a.sonEgitimTarihi || '');
+                }
+                return 0;
+            });
+
+            return list;
+        }
+
+        // Render Table
+        function renderTable() {
+            const filtered = getFilteredEmployees();
+            const total = filtered.length;
+
+            // Adjust pagination
+            const totalPages = Math.ceil(total / pagination.pageSize) || 1;
+            if (pagination.page > totalPages) pagination.page = totalPages;
+            if (pagination.page < 1) pagination.page = 1;
+
+            const startIdx = (pagination.page - 1) * pagination.pageSize;
+            const endIdx = Math.min(startIdx + pagination.pageSize, total);
+            const pageItems = filtered.slice(startIdx, endIdx);
+
+            const tbody = document.getElementById('employeeTableBody');
+            tbody.innerHTML = '';
+
+            if (pageItems.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding: 40px; color:var(--slate-600);">Kriterlere uygun çalışan kaydı bulunamadı.</td></tr>`;
+            } else {
+                pageItems.forEach((emp, index) => {
+                    const isSelected = selectedTcSet.has(emp.tc);
+                    const tr = document.createElement('tr');
+                    if (emp.durumKodu === 'warning') tr.className = 'highlight-row';
+                    if (emp.durumKodu === 'expired') tr.className = 'danger-row';
+
+                    let countdownHtml = '';
+                    if (emp.kalanGun === null || emp.kalanGun === undefined) {
+                        countdownHtml = `<span class="countdown-pill none">Tarih Yok</span>`;
+                    } else if (emp.kalanGun < 0) {
+                        countdownHtml = `<span class="countdown-pill expired">⛔ ${Math.abs(emp.kalanGun)} Gün Geçti</span>`;
+                    } else if (emp.kalanGun <= 90) {
+                        countdownHtml = `<span class="countdown-pill warning">⚠️ ${emp.kalanGun} Gün Kaldı</span>`;
+                    } else {
+                        countdownHtml = `<span class="countdown-pill valid">✓ ${emp.kalanGun} Gün</span>`;
+                    }
+
+                    let statusBadgeHtml = '';
+                    if (emp.durumKodu === 'valid') {
+                        statusBadgeHtml = `<span class="status-badge valid">● Geçerli</span>`;
+                    } else if (emp.durumKodu === 'warning') {
+                        statusBadgeHtml = `<span class="status-badge warning">⚠️ < 90 Gün</span>`;
+                    } else if (emp.durumKodu === 'expired') {
+                        statusBadgeHtml = `<span class="status-badge expired">⛔ Süresi Doldu</span>`;
+                    } else {
+                        statusBadgeHtml = `<span class="status-badge no_training">⭕ Eğitimsiz</span>`;
+                    }
+
+                    tr.innerHTML = `
+                        <td style="text-align: center;">
+                            <input type="checkbox" class="checkbox-custom row-checkbox" data-tc="${emp.tc}" ${isSelected ? 'checked' : ''} onchange="toggleSelectRow('${emp.tc}', this.checked)">
+                        </td>
+                        <td style="font-family: monospace; font-weight: 600;">${emp.tc}</td>
+                        <td>
+                            <div style="font-weight: 700; color: var(--slate-900);">${emp.adSoyad}</div>
+                            <div style="font-size: 11.5px; color: var(--slate-600);">${emp.cinsiyet || ''} • GSM: ${emp.gsm || 'Belirtilmedi'}</div>
+                        </td>
+                        <td>
+                            <div style="font-weight: 600;">${emp.bolumu || '-'}</div>
+                            <div style="font-size: 11px; color: var(--slate-600);">${emp.kisimi || ''}</div>
+                        </td>
+                        <td>
+                            <div style="font-size: 12.5px;">${emp.gorevi || emp.meslegi || '-'}</div>
+                        </td>
+                        <td>
+                            <div style="font-weight: 600;">${emp.sonEgitimTarihiGosterim || '<span style="color:#94a3b8;">Kayıt Yok</span>'}</div>
+                            <div style="font-size: 11px; color: var(--slate-600);">${emp.sonEgitimSaati || ''}</div>
+                        </td>
+                        <td>
+                            <div style="font-weight: 700; color: ${emp.durumKodu === 'expired' ? '#b91c1c' : emp.durumKodu === 'warning' ? '#b45309' : 'inherit'};">
+                                ${emp.gecerlilikBitisGosterim || '-'}
+                            </div>
+                            <div style="font-size: 11px; color: var(--slate-600);">2 Yıl Süre</div>
+                        </td>
+                        <td>${countdownHtml}</td>
+                        <td>${statusBadgeHtml}</td>
+                        <td style="text-align: right; white-space: nowrap;">
+                            <button class="btn btn-primary btn-sm" onclick="openTrainingForSingle('${emp.tc}')" title="Bu personele yeni eğitim ekle">
+                                <span>+ Eğitim</span>
+                            </button>
+                            <button class="btn btn-outline btn-sm" onclick="openSmsModalForSingle('${emp.tc}')" title="Bildirim Metni / WhatsApp">
+                                <span>📱</span>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            // Update footer
+            document.getElementById('footerShowing').innerText = total > 0 ? `${startIdx + 1} - ${endIdx}` : '0 - 0';
+            document.getElementById('footerTotal').innerText = total.toLocaleString('tr-TR');
+
+            renderPaginationControls(totalPages);
+            updateBatchToolbar();
+        }
+
+        // Render Pagination buttons
+        function renderPaginationControls(totalPages) {
+            const container = document.getElementById('paginationControls');
+            container.innerHTML = '';
+
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'page-btn';
+            prevBtn.innerHTML = '&laquo;';
+            prevBtn.disabled = pagination.page === 1;
+            prevBtn.onclick = () => { pagination.page--; renderTable(); };
+            container.appendChild(prevBtn);
+
+            // Display page numbers
+            let startP = Math.max(1, pagination.page - 2);
+            let endP = Math.min(totalPages, pagination.page + 2);
+
+            for (let p = startP; p <= endP; p++) {
+                const btn = document.createElement('button');
+                btn.className = 'page-btn' + (p === pagination.page ? ' active' : '');
+                btn.innerText = p;
+                btn.onclick = () => { pagination.page = p; renderTable(); };
+                container.appendChild(btn);
+            }
+
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'page-btn';
+            nextBtn.innerHTML = '&raquo;';
+            nextBtn.disabled = pagination.page === totalPages;
+            nextBtn.onclick = () => { pagination.page++; renderTable(); };
+            container.appendChild(nextBtn);
+        }
+
+        // Filter Handlers
+        function filterByStatus(status) {
+            currentFilter.status = status;
+            pagination.page = 1;
+
+            // Update tab classes
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                if (btn.getAttribute('data-tab') === status) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Update stat cards
+            document.querySelectorAll('.stat-card').forEach(card => card.classList.remove('active'));
+
+            renderTable();
+        }
+
+        function handleSearch() {
+            currentFilter.search = document.getElementById('searchInput').value;
+            pagination.page = 1;
+            renderTable();
+        }
+
+        function handleDepartmentFilter() {
+            currentFilter.department = document.getElementById('departmentFilter').value;
+            pagination.page = 1;
+            renderTable();
+        }
+
+        function handleSort() {
+            currentFilter.sort = document.getElementById('sortSelect').value;
+            renderTable();
+        }
+
+        function changePageSize(size) {
+            pagination.pageSize = parseInt(size, 10);
+            pagination.page = 1;
+            renderTable();
+        }
+
+        // Row Selection
+        function toggleSelectRow(tc, isChecked) {
+            if (isChecked) {
+                selectedTcSet.add(tc);
+            } else {
+                selectedTcSet.delete(tc);
+            }
+            updateBatchToolbar();
+        }
+
+        function toggleSelectAll(isChecked) {
+            const filtered = getFilteredEmployees();
+            filtered.forEach(emp => {
+                if (isChecked) {
+                    selectedTcSet.add(emp.tc);
+                } else {
+                    selectedTcSet.delete(emp.tc);
+                }
+            });
+            renderTable();
+        }
+
+        function selectAllVisible(select) {
+            if (!select) {
+                selectedTcSet.clear();
+                document.getElementById('selectAllCheckbox').checked = false;
+            }
+            renderTable();
+        }
+
+        function updateBatchToolbar() {
+            const count = selectedTcSet.size;
+            const toolbar = document.getElementById('batchToolbar');
+            if (count > 0) {
+                toolbar.style.display = 'flex';
+                document.getElementById('selectedCount').innerText = count;
+            } else {
+                toolbar.style.display = 'none';
+            }
+        }
+
+        // New Training Modal Logic
+        function openNewTrainingModal(preselectedTcs = []) {
+            modalSelectedEmployees = [];
+            const list = preselectedTcs.length > 0 ? preselectedTcs : Array.from(selectedTcSet);
+
+            list.forEach(tc => {
+                const emp = appData.employees.find(e => e.tc === tc);
+                if (emp && !modalSelectedEmployees.some(x => x.tc === emp.tc)) {
+                    modalSelectedEmployees.push(emp);
+                }
+            });
+
+            renderModalParticipants();
+            openModal('newTrainingModal');
+        }
+
+        function openTrainingForSingle(tc) {
+            openNewTrainingModal([tc]);
+        }
+
+        function openTrainingForSelected() {
+            openNewTrainingModal(Array.from(selectedTcSet));
+        }
+
+        function selectExpiringAndOpenTraining() {
+            const expiring = appData.employees.filter(e => e.durumKodu === 'warning' || e.durumKodu === 'expired');
+            openNewTrainingModal(expiring.map(e => e.tc));
+        }
+
+        function addExpiringToModal() {
+            const expiring = appData.employees.filter(e => e.durumKodu === 'warning' || e.durumKodu === 'expired');
+            expiring.forEach(emp => {
+                if (!modalSelectedEmployees.some(x => x.tc === emp.tc)) {
+                    modalSelectedEmployees.push(emp);
+                }
+            });
+            renderModalParticipants();
+            showToast(`${expiring.length} kişi listeye eklendi`, "success");
+        }
+
+        function addNoTrainingToModal() {
+            const noTr = appData.employees.filter(e => e.durumKodu === 'no_training');
+            noTr.forEach(emp => {
+                if (!modalSelectedEmployees.some(x => x.tc === emp.tc)) {
+                    modalSelectedEmployees.push(emp);
+                }
+            });
+            renderModalParticipants();
+            showToast(`${noTr.length} eğitimsiz personel listeye eklendi`, "success");
+        }
+
+        function clearModalParticipants() {
+            modalSelectedEmployees = [];
+            renderModalParticipants();
+        }
+
+        function renderModalParticipants() {
+            const container = document.getElementById('modalParticipantsList');
+            document.getElementById('modalParticipantCount').innerText = modalSelectedEmployees.length;
+
+            if (modalSelectedEmployees.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding: 20px; color:var(--slate-600); font-size:12px;">Henüz personel eklenmedi. Yukarıdaki butonları kullanarak veya arama yaparak ekleyebilirsiniz.</div>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            modalSelectedEmployees.forEach(emp => {
+                const div = document.createElement('div');
+                div.className = 'participant-item';
+                div.innerHTML = `
+                    <div>
+                        <strong>${emp.adSoyad}</strong> <span style="font-family:monospace; color:#64748b;">(${emp.tc})</span>
+                        <div style="font-size:11px; color:#64748b;">${emp.bolumu || ''} • ${emp.gorevi || ''}</div>
+                    </div>
+                    <span class="remove-participant" onclick="removeModalParticipant('${emp.tc}')" title="Listeden Çıkar">&times; Kaldır</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function removeModalParticipant(tc) {
+            modalSelectedEmployees = modalSelectedEmployees.filter(e => e.tc !== tc);
+            renderModalParticipants();
+        }
+
+        function searchEmployeeForModal(q) {
+            const resultsBox = document.getElementById('modalSearchResults');
+            if (!q || q.length < 2) {
+                resultsBox.style.display = 'none';
+                return;
+            }
+
+            const query = q.toLocaleLowerCase('tr-TR').trim();
+            const matches = appData.employees.filter(e => {
+                return (e.tc && e.tc.includes(query)) ||
+                       (e.adSoyad && e.adSoyad.toLocaleLowerCase('tr-TR').includes(query));
+            }).slice(0, 8);
+
+            if (matches.length === 0) {
+                resultsBox.innerHTML = '<div style="padding:8px; font-size:12px; color:#64748b;">Sonuç bulunamadı</div>';
+                resultsBox.style.display = 'block';
+                return;
+            }
+
+            resultsBox.innerHTML = '';
+            matches.forEach(m => {
+                const item = document.createElement('div');
+                item.style.padding = '8px 12px';
+                item.style.fontSize = '12px';
+                item.style.cursor = 'pointer';
+                item.style.borderBottom = '1px solid #f1f5f9';
+                item.innerHTML = `<strong>${m.adSoyad}</strong> (${m.tc}) - <span style="color:#64748b;">${m.bolumu || ''}</span>`;
+                item.onclick = () => {
+                    if (!modalSelectedEmployees.some(x => x.tc === m.tc)) {
+                        modalSelectedEmployees.push(m);
+                        renderModalParticipants();
+                    }
+                    resultsBox.style.display = 'none';
+                    document.getElementById('modalSearchEmployee').value = '';
+                };
+                resultsBox.appendChild(item);
+            });
+            resultsBox.style.display = 'block';
+        }
+
+        // Submit New Training Form
+        async function submitNewTraining(event) {
+            event.preventDefault();
+
+            if (modalSelectedEmployees.length === 0) {
+                alert("Lütfen eğitime en az 1 personel ekleyiniz!");
+                return;
+            }
+
+            const egitimTarihi = document.getElementById('formEgitimTarihi').value;
+            const egitimSaati = document.getElementById('formEgitimSaati').value;
+            const egitimSuresiSaat = parseInt(document.getElementById('formEgitimSuresi').value, 10);
+            const egitimKonusu = document.getElementById('formEgitimKonusu').value;
+            const egitmen = document.getElementById('formEgitmen').value;
+            const egitimYeri = document.getElementById('formEgitimYeri').value;
+            const notlar = document.getElementById('formNotlar').value;
+            const tcList = modalSelectedEmployees.map(e => e.tc);
+
+            const payload = {
+                egitimTarihi,
+                egitimSaati,
+                egitimSuresiSaat,
+                egitimKonusu,
+                egitmen,
+                egitimYeri,
+                notlar,
+                katilimciTcListesi: tcList
+            };
+
+            try {
+                let success = false;
+
+                // Send to backend server
+                try {
+                    const resp = await fetch('/api/add-training', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (resp.ok) {
+                        const resData = await resp.json();
+                        success = true;
+                    }
+                } catch(e) {}
+
+                // Also persist locally in localStorage as a backup
+                let localTrainings = [];
+                try {
+                    localTrainings = JSON.parse(localStorage.getItem('isg_local_trainings') || '[]');
+                } catch(e) {}
+                payload.id = localTrainings.length + 1;
+                payload.kayitTarihi = new Date().toISOString();
+                localTrainings.push(payload);
+                localStorage.setItem('isg_local_trainings', JSON.stringify(localTrainings));
+
+                // Update in-memory state
+                applyLocalTrainings([payload]);
+                renderStats();
+                renderTable();
+                checkAlertBanner();
+
+                closeModal('newTrainingModal');
+                showToast(`${tcList.length} personelin eğitimi başarıyla kaydedildi! Geçerlilik süresi 2 yıl uzatıldı.`, "success");
+
+                // Clear selection
+                selectedTcSet.clear();
+                updateBatchToolbar();
+
+                // Ask to print official form
+                setTimeout(() => {
+                    if (confirm("Yeni eğitim başarıyla kaydedildi. Resmi 'İSG Eğitim Katılım ve Takip Formu' çıktısını yazdırmak ister misiniz?")) {
+                        printOfficialFormForTraining(payload, modalSelectedEmployees);
+                    }
+                }, 400);
+
+            } catch (err) {
+                console.error("Eğitim kaydı hatası:", err);
+                alert("Eğitim kaydedilirken bir hata oluştu: " + err.message);
+            }
+        }
+
+        // History Modal
+        async function openHistoryModal() {
+            const tbody = document.getElementById('historyTableBody');
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px;">Yükleniyor...</td></tr>';
+            openModal('historyModal');
+
+            let trainings = appData.trainings || [];
+            const localTr = localStorage.getItem('isg_local_trainings');
+            if (localTr) {
+                try {
+                    const parsed = JSON.parse(localTr);
+                    parsed.forEach(p => {
+                        if (!trainings.some(t => t.id === p.id && t.egitimTarihi === p.egitimTarihi)) {
+                            trainings.push(p);
+                        }
+                    });
+                } catch(e) {}
+            }
+
+            tbody.innerHTML = '';
+            if (trainings.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#64748b;">Henüz tamamlanmış eğitim kaydı bulunmuyor.</td></tr>';
+                return;
+            }
+
+            trainings.reverse().forEach((tr, idx) => {
+                const trRow = document.createElement('tr');
+                trRow.innerHTML = `
+                    <td>${tr.id || (idx + 1)}</td>
+                    <td style="font-weight:700;">${formatDate(tr.egitimTarihi)}</td>
+                    <td>${tr.egitimSaati || '-'} (${tr.egitimSuresiSaat || 4} Saat)</td>
+                    <td style="font-weight:600;">${tr.egitimKonusu || 'Temel İSG Eğitimi'}</td>
+                    <td>${tr.egitmen || '-'}</td>
+                    <td><span class="status-badge valid">${tr.katilimciSayisi || (tr.katilimciTcListesi ? tr.katilimciTcListesi.length : 0)} Kişi</span></td>
+                    <td style="text-align: right;">
+                        <button class="btn btn-outline btn-sm" onclick="reprintFormForHistory(${JSON.stringify(tr).replace(/"/g, '&quot;')})">
+                            🖨️ Yazdır
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(trRow);
+            });
+        }
+
+        // SMS / WhatsApp Notification Modal
+        function openSmsModalForSingle(tc) {
+            const emp = appData.employees.find(e => e.tc === tc);
+            if (!emp) return;
+            openSmsModal([emp]);
+        }
+
+        function openSmsModalForWarning() {
+            const warningEmps = appData.employees.filter(e => e.durumKodu === 'warning' || e.durumKodu === 'expired');
+            if (warningEmps.length === 0) {
+                alert("Şu anda 90 günden az kalan eğitim bulunmamaktadır.");
+                return;
+            }
+            openSmsModal(warningEmps);
+        }
+
+        function openSmsModalForSelected() {
+            const emps = Array.from(selectedTcSet).map(tc => appData.employees.find(e => e.tc === tc)).filter(Boolean);
+            openSmsModal(emps);
+        }
+
+        function openSmsModal(employees) {
+            if (employees.length === 1) {
+                const emp = employees[0];
+                document.getElementById('smsTargetName').innerText = `${emp.adSoyad} (${emp.bolumu || ''})`;
+                document.getElementById('smsTargetGsm').innerText = `GSM: ${emp.gsm || 'Belirtilmedi'} | Geçerlilik Bitiş: ${emp.gecerlilikBitisGosterim || 'Belirtilmedi'} (${emp.kalanGun !== null ? emp.kalanGun + ' gün kaldı' : ''})`;
+
+                const msg = `Sayın ${emp.adSoyad},\n\nOsmangazi Belediyesi Personel A.Ş. İSG Birimi kayıtlarına göre, Temel İş Sağlığı ve Güvenliği Eğitimi geçerlilik sürenizin dolmasına ${emp.kalanGun > 0 ? emp.kalanGun + ' gün kalmıştır' : 'süre dolmuştur'} (Geçerlilik Bitiş: ${emp.gecerlilikBitisGosterim}).\n\n6331 sayılı İSG Kanunu gereğince eğitim yenileme oturumuna katılımınız zorunludur. Eğitim tarihi ve detaylar için birim amiriniz veya İSG birimi ile iletişime geçiniz.`;
+
+                document.getElementById('smsMessageTemplate').value = msg;
+
+                const cleanGsm = (emp.gsm || '').replace(/[^0-9]/g, '');
+                let formattedGsm = cleanGsm;
+                if (formattedGsm.startsWith('0')) formattedGsm = '9' + formattedGsm;
+                else if (!formattedGsm.startsWith('90')) formattedGsm = '90' + formattedGsm;
+
+                const waBtn = document.getElementById('btnWhatsAppDirect');
+                if (cleanGsm.length >= 10) {
+                    waBtn.href = `https://wa.me/${formattedGsm}?text=${encodeURIComponent(msg)}`;
+                    waBtn.style.display = 'inline-flex';
+                } else {
+                    waBtn.style.display = 'none';
+                }
+            } else {
+                document.getElementById('smsTargetName').innerText = `${employees.length} Personel (Toplu Bildirim)`;
+                document.getElementById('smsTargetGsm').innerText = "Tüm birim amirleri ve ilgili personele toplu bilgilendirme duyurusu";
+
+                const msg = `DİKKAT: İSG TEMEL EĞİTİM GEÇERLİLİK BİLGİLENDİRMESİ\n\nOsmangazi Belediyesi Personel A.Ş. bünyesinde görev yapan ekteki ${employees.length} personelin İSG Temel Eğitimi geçerlilik süresi dolmak üzeredir (90 günden az kaldı).\n\n2 yıllık yasal periyodun aksamaması ve cezai müeyyidelerin doğmaması adına planlanan yeni İSG eğitim oturumlarına personellerin eksiksiz katılımının sağlanması rica olunur.\n\nİSG Birimi`;
+
+                document.getElementById('smsMessageTemplate').value = msg;
+                document.getElementById('btnWhatsAppDirect').style.display = 'none';
+            }
+
+            openModal('smsModal');
+        }
+
+        function copySmsText() {
+            const txt = document.getElementById('smsMessageTemplate').value;
+            navigator.clipboard.writeText(txt).then(() => {
+                showToast("Bildirim metni panoya kopyalandı!", "success");
+            });
+        }
+
+        // Print Official Form
+        function printOfficialForm() {
+            const filtered = getFilteredEmployees().slice(0, 100);
+            printOfficialFormForTraining({
+                egitimKonusu: "Temel İş Sağlığı ve Güvenliği Eğitimi (Genel, Sağlık ve Teknik Konular)",
+                egitimTarihi: new Date().toISOString().split('T')[0],
+                egitimSaati: "09:00 - 13:00 (4 Saat)",
+                egitimYeri: "Belediye Meclis Salonu",
+                egitmen: "İş Güvenliği Uzmanı / İşyeri Hekimi"
+            }, filtered);
+        }
+
+        function reprintFormForHistory(tr) {
+            let participants = [];
+            if (tr.katilimciTcListesi) {
+                participants = tr.katilimciTcListesi.map(tc => appData.employees.find(e => e.tc === tc)).filter(Boolean);
+            }
+            printOfficialFormForTraining(tr, participants);
+        }
+
+        function printOfficialFormForTraining(training, participants) {
+            document.getElementById('printKonu').innerText = training.egitimKonusu || "Temel İş Sağlığı ve Güvenliği Eğitimi";
+            document.getElementById('printTarih').innerText = formatDate(training.egitimTarihi);
+            document.getElementById('printSaat').innerText = training.egitimSaati || "09:00 - 13:00 (4 Saat)";
+            document.getElementById('printYer').innerText = training.egitimYeri || "Belediye Eğitim Salonu";
+            document.getElementById('printEgitmen').innerText = training.egitmen || "İş Güvenliği Uzmanı";
+
+            const tbody = document.getElementById('printTableBody');
+            tbody.innerHTML = '';
+
+            participants.forEach((p, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="text-align:center;">${index + 1}</td>
+                    <td style="font-family:monospace;">${p.tc}</td>
+                    <td style="font-weight:700;">${p.adSoyad}</td>
+                    <td>${p.bolumu || '-'}</td>
+                    <td>${p.gorevi || p.meslegi || '-'}</td>
+                    <td style="text-align:center;">${training.egitimSuresiSaat || 4} Saat</td>
+                    <td style="height:26px;"></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            window.print();
+        }
+
+        // Export to Excel
+        function exportToExcel() {
+            const filtered = getFilteredEmployees();
+            let tableHtml = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+                <head><meta charset="UTF-8"></head>
+                <body>
+                    <table border="1">
+                        <tr style="background:#0284c7; color:white; font-weight:bold;">
+                            <th>Sıra</th>
+                            <th>TC Kimlik No</th>
+                            <th>Adı Soyadı</th>
+                            <th>Cinsiyeti</th>
+                            <th>Firması</th>
+                            <th>Bölümü</th>
+                            <th>Mesleği / Görevi</th>
+                            <th>İşe Giriş Tarihi</th>
+                            <th>Son Eğitim Tarihi</th>
+                            <th>Eğitim Saati</th>
+                            <th>Geçerlilik Bitiş (2 Yıl)</th>
+                            <th>Kalan Gün</th>
+                            <th>Durum</th>
+                            <th>GSM No</th>
+                        </tr>
+            `;
+
+            filtered.forEach((e, idx) => {
+                tableHtml += `
+                    <tr>
+                        <td>${idx + 1}</td>
+                        <td style="mso-number-format:'\\@';">${e.tc}</td>
+                        <td>${e.adSoyad}</td>
+                        <td>${e.cinsiyet || ''}</td>
+                        <td>${e.firmasi || ''}</td>
+                        <td>${e.bolumu || ''}</td>
+                        <td>${e.gorevi || e.meslegi || ''}</td>
+                        <td>${e.iseGiris || ''}</td>
+                        <td>${e.sonEgitimTarihiGosterim || ''}</td>
+                        <td>${e.sonEgitimSaati || ''}</td>
+                        <td>${e.gecerlilikBitisGosterim || ''}</td>
+                        <td>${e.kalanGun !== null ? e.kalanGun : ''}</td>
+                        <td>${e.durum || ''}</td>
+                        <td style="mso-number-format:'\\@';">${e.gsm || ''}</td>
+                    </tr>
+                `;
+            });
+
+            tableHtml += `</table></body></html>`;
+
+            const blob = new Blob([tableHtml], { type: 'application/vnd.ms-excel;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ISG_Egitim_Takip_Listesi_${new Date().toISOString().split('T')[0]}.xls`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            showToast("Excel dosyası başarıyla indirildi!", "success");
+        }
+
+        // Browser & Windows notification check
+        function checkAndPromptNotifications() {
+            const warn = appData.summary.warningCount || 0;
+            const exp = appData.summary.expiredCount || 0;
+
+            if (warn > 0 || exp > 0) {
+                // Check browser permission
+                if ("Notification" in window && Notification.permission === "default") {
+                    Notification.requestPermission().then(perm => {
+                        if (perm === "granted") {
+                            new Notification("İSG Eğitim Takip Uyarısı", {
+                                body: `${warn} çalışanın eğitimi 90 günden az kaldı, ${exp} çalışanın süresi doldu!`,
+                                icon: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23d97706'><path d='M12 2L1 21h22L12 2zm0 3.5L20.5 19H3.5L12 5.5zM11 10v4h2v-4h-2zm0 6v2h2v-2h-2z'/></svg>"
+                            });
+                        }
+                    });
+                } else if ("Notification" in window && Notification.permission === "granted") {
+                    new Notification("İSG Eğitim Takip Uyarısı", {
+                        body: `${warn} çalışanın eğitimi 90 günden az kaldı, ${exp} çalışanın süresi doldu!`,
+                    });
+                }
+
+                // Trigger backend Windows toast
+                fetch('/api/send-toast', { method: 'POST' }).catch(()=>{});
+            }
+        }
+
+        // Helpers
+        function openModal(id) {
+            document.getElementById(id).classList.add('open');
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('open');
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            try {
+                const parts = dateStr.split('-');
+                if (parts.length === 3) {
+                    return `${parts[2]}.${parts[1]}.${parts[0]}`;
+                }
+                const d = new Date(dateStr);
+                return d.toLocaleDateString('tr-TR');
+            } catch(e) {
+                return dateStr;
+            }
+        }
+
+        function showToast(message, type = "info") {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerText = message;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 200);
+            }, 3500);
+        }
+    </script>
+</body>
+</html>

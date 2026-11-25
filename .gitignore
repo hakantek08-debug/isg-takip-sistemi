@@ -1,0 +1,12 @@
+# KVKK & Gizlilik (2.458 Kişilik Gerçek Personel Listesi)
+calisanListTable.xls
+calisanlar.json
+isg_egitim_bildirimleri.txt
+
+# Geçici & Kurulum Dosyaları
+setup_git.ps1
+push_repo.ps1
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
