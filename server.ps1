@@ -75,8 +75,8 @@ function Get-RefreshedData {
     $obj.summary.warningCount = $criticalCount
     $obj.summary.expiredCount = $expiredCount
     $obj.summary.noTrainingCount = $noTrainingCount
-    $obj.summary.today = $today.ToString("yyyy-MM-dd")
-    $obj.summary.todayGosterim = $today.ToString("dd.MM.yyyy")
+    $obj.summary | Add-Member -MemberType NoteProperty -Name "today" -Value $today.ToString("yyyy-MM-dd") -Force
+    $obj.summary | Add-Member -MemberType NoteProperty -Name "todayGosterim" -Value $today.ToString("dd.MM.yyyy") -Force
 
     $deptList = @($deptSet) | Sort-Object
 
@@ -296,6 +296,16 @@ while ($listener.IsListening) {
 
     } catch {
         Write-Host "İstek hatası: $_" -ForegroundColor Red
+        try {
+            if ($response) {
+                $response.StatusCode = 500
+                $errBytes = [System.Text.Encoding]::UTF8.GetBytes('{"error":"Sunucu hatası"}')
+                $response.ContentType = "application/json; charset=utf-8"
+                $response.ContentLength64 = $errBytes.Length
+                $response.OutputStream.Write($errBytes, 0, $errBytes.Length)
+                $response.Close()
+            }
+        } catch {}
     }
 }
 
